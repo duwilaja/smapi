@@ -50,17 +50,17 @@ class Mobile extends CI_Controller {
 			case "laka": $tn="tmc_pservice_laka"; break;
 			case "pidana": $tn="tmc_pservice_pidana"; break;
 			case "langgar": $tn="tmc_pservice_langgar"; break;
-			case "gangguan": $tn="tmc_pservice_gangguan"; break;
+			// case "gangguan": $tn="tmc_pservice_gangguan"; break;
 		}
 		return $tn;
 	}
 	private function fieldnames($kategori){
 		$fn="";
 		switch($kategori){
-			case "laka": $fn="tgl,jam,jalan,lat,lng,jenis,jmlkorban,korbanmd,kebutuhan,uploadedfile,pelapor,telp"; break;
+			case "laka": $fn="tgl,jam,jalan,lat,lng,jenis,jmlkorban,korbanmd,uploadedfile,pelapor,telp"; break;
 			case "pidana": $fn="tgl,jam,jalan,lat,lng,jenis,uploadedfile,pelapor,telp"; break;
 			case "langgar": $fn="tgl,jam,jalan,lat,lng,jenis,uploadedfile,pelapor,telp,langgar"; break;
-			case "gangguan": $fn="tgl,jam,jalan,lat,lng,jenis,dampak,uploadedfile,pelapor,telp,lainnya"; break;
+			// case "gangguan": $fn="tgl,jam,jalan,lat,lng,jenis,dampak,uploadedfile,pelapor,telp,lainnya"; break;
 		}
 		return $fn;
 	}
@@ -88,7 +88,7 @@ class Mobile extends CI_Controller {
 		echo json_encode($retval);
 	}
 	public function listofvalue(){
-		$user=$this->session->userdata('user_token');
+		$user=$this->token();
 		$auth=$this->input->get_request_header('X-token', TRUE);
 		if(isset($user)){
 			if($auth==$user){
@@ -107,7 +107,7 @@ class Mobile extends CI_Controller {
 	}
 	public function send()
 	{
-		$user=$this->session->userdata('user_token');
+		$user=$this->token();
 		$auth=$this->input->get_request_header('X-token', TRUE);
 		if(isset($user)){
 			if($auth==$user){
@@ -148,6 +148,21 @@ class Mobile extends CI_Controller {
 			$retval=array('code'=>"403",'ttl'=>"Session closed",'msgs'=>"Please login");
 			echo json_encode($retval);
 		}
+	}
+
+	private function token()
+	{
+		$q = $this->db->get_where('token', [
+			'id' => '2' 
+		]);
+
+		$token = '';
+		if ($q->num_rows() > 0) {
+			$token = $q->row()->token;
+		}
+
+		return $token;
+		
 	}
 	
 	private function send_notif_web($kategori){
